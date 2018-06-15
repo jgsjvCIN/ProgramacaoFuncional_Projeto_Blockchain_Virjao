@@ -1,21 +1,16 @@
 {-# LANGUAGE OverloadedStrings #-}
-import Chain
-import           Control.Exception        (SomeException)
-import           Control.Exception.Lifted (handle)
-import           Control.Monad.IO.Class   (liftIO)
-import           Data.Aeson               (Value, encode, object, (.=))
-import           Data.Aeson.Parser        (json)
-import           Data.ByteString          (ByteString)
-import           Data.Conduit             (($$))
-import           Data.Conduit.Attoparsec  (sinkParser)
-import           Network.HTTP.Types       (status200, status400)
-import           Network.Wai              (Application, Response, responseLBS)
-import           Network.Wai.Conduit      (sourceRequestBody)
-import           Network.Wai.Handler.Warp (run)
-
-
-main :: IO ()
-main = run 3000 app
+import Network.Wai
+import Network.HTTP.Types
+import Network.Wai.Handler.Warp (run)
 
 app :: Application
-app req sendResponse = 
+app :: Application
+app req respond = if ((requestMethod req) = "POST") then
+    createAndInsert somehow
+    else if ((requestMethod req) = "GET")
+        IhaveNoIdea
+
+main :: IO ()
+main = do
+    putStrLn $ "http://localhost:8080/"
+    run 8080 app
