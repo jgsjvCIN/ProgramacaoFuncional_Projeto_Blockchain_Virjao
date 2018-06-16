@@ -6,9 +6,9 @@ import Network.Wai.Handler.Warp (run)
 app :: Application
 app :: Application
 app req respond = if ((requestMethod req) = "POST") then
-    createAndInsert somehow
+    createAndInsert trans list
     else if ((requestMethod req) = "GET")
-        IhaveNoIdea
+        (respond $ responseLBS status200 [] "Hello World")
 
 main :: IO ()
 main = do

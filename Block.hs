@@ -3,7 +3,11 @@ module Block(
     getTransaction,
     getHash,
     makeHash,
-    makeBlock
+    makeBlock,
+    getBlockPayer,
+    getBlockReceiver,
+    isIn,
+    getAll
 ) where
 
     import Transaction
@@ -24,3 +28,20 @@ module Block(
     makeBlock :: Transaction -> Hash -> Block
     makeBlock trans 0 = (trans, (makeHash trans 0) )
     makeBlock trans hash = (trans, (makeHash trans hash))
+
+    getBlockPayer :: Block -> String
+    getBlockPayer (trans,hash) = getPayer trans
+
+    getBlockReceiver :: Block -> String
+    getBlockReceiver (trans,hash) = getReceiver trans
+    
+    isIn :: Block -> String -> Bool
+    isIn block name = if ((getBlockPayer block) == name || (getBlockReceiver block) == name)
+        then
+            True
+        else
+            False
+
+    getAll :: String -> [Block] -> [Block]
+    getAll _ [] = []
+    getAll name list = [y | y <- [(head list)], isIn (head list) name] ++ getAll name (tail list)
