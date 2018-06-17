@@ -1,5 +1,6 @@
 module Block(
     Block(..),
+    Hash(..),
     getTransaction,
     getHash,
     makeHash,
