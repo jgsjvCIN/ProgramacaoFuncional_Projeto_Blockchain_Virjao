@@ -2,7 +2,11 @@
 
 module Chain(
     Chain(..),
-    insert
+    insert,
+    createAndInsert,
+    createInfoObj,
+    listInfo,
+    getInfo
 ) where
     
     import Transaction
@@ -32,10 +36,10 @@ module Chain(
     createInfoObj:: Block -> Info
     createInfoObj ((p , r, v), hash) = Info p r v
 
-    printBlocks :: String -> [Block] -> [Info]
-    printBlocks name list = map createInfoObj (getAll name list)
+    listInfo :: String -> [Block] -> [Info]
+    listInfo name list = map createInfoObj (getAll name list)
 
-    main :: String -> [Block] -> IO ()
-    main name list= B.putStrLn $ encode (printBlocks name list)
+    getInfo :: String -> [Block] -> IO ()
+    getInfo name list= B.putStrLn $ encode (listInfo name list)
 
     -- [(("San","Al",4.0),-2416514153299201292),(("Al","Bet",3.0),-6711607388473116096),(("Al","San",2.0),8173646634568268900)]
