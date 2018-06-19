@@ -1,26 +1,34 @@
 {-# LANGUAGE OverloadedStrings #-}
+import Control.Applicative ((<$>))
+import Control.Monad
 import Network.Wai
+import Network.Wai.Handler.Warp
 import Network.HTTP.Types
-import Network.Wai.Handler.Warp (run)
+import Network.HTTP.Types.Header (hContentType)
+import Data.ByteString (ByteString)
+import Data.Text
+import Data.Text.Encoding
+import Data.Maybe
 import Chain
 
-app :: Application
-app req respond = if ((requestMethod req) == "POST") then
-    let query = queryString req :: [(ByteString, Maybe ByteString)]
-        payerParam = join $ lookup "payer" query :: Maybe ByteString
-        receiverParam = join $ lookup "receiver" query :: Maybe ByteString
-        valueParam = join $ lookup "value" query :: Maybe ByteString
-        listParam = join $ lookup "list" query :: Maybe ByteString
-        postReturn = createAndInsert (payerParam , receiverParam , valueParam) listParam
-    in responseLBS status200 [(hContentType, "application/json")] postReturn
-    else if ((requestMethod req) == "GET")
-        let query = queryString req :: [(ByteString, Maybe ByteString)]
-            nameParam = join $ lookup "name" query :: Maybe ByteString
-            listParam = join $ lookup "list" query :: Maybe ByteString
-            getReturn = getInfo nameParam listParam
-        in responseLBS status200 [(hContentType, "application/json")] getReturn
+getParam :: Request -> ByteString -> (Maybe ByteString)
+getParam req param = join (lookup param (queryString req))
 
-main :: IO ()
+-- Talvez seja bom substituir o fromJust
+getQueryText :: Request -> ByteString -> Text
+getQueryText req param = decodeUtf8 (fromJust (getParam req param))
+
+main :: IO()
 main = do
-    putStrLn $ "http://localhost:8080/"
-    run 8080 app
+    let port = 3000
+    putStrLn $ "Listening on port " ++ show port
+    run port app
+
+app :: Application
+app req func = do
+    let nameP = unpack (getQueryText req "name")
+        listP = unpack (getQueryText req "list")
+        in responseBuilder
+        status200
+        [(hContentType, "text/plain")]
+        $ fromString $ "Query parameter: "
